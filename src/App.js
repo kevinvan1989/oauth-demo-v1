@@ -6,14 +6,15 @@ class App extends Component {
     const  name = document.getElementById("register_name").value;
     const email = document.getElementById("register_email").value;
     const password = document.getElementById("register_password").value;
-
-    console.log(name, email, password)
-
     
     Axios.post("https://eindwerk.jnnck.be/api/users", {
       name: name,
       email: email,
-      password: password
+      password: password,
+      first_name: 'a',
+      last_name:'b',
+      favorite_color: '#ffffff',
+      avatar: 'a'
     }).then(response => {
       console.log(response)
     }).catch(e => {
@@ -22,15 +23,29 @@ class App extends Component {
   }
 
   login = () => {
-    Axios.post("https://eindwerk.jnnck.be/api/oauth/token", {
-      email: document.getElementById("login_email").value,
-      password: document.getElementById("login_password").value
+    const  username = document.getElementById("login_email").value;
+    const password = document.getElementById("login_password").value;
+
+    Axios.post("https://eindwerk.jnnck.be/oauth/token", {
+      username: username,
+      password: password,
+      grant_type: "password",
+      client_id: 2,
+      client_secret: "iwrHFPcaiQ3bZTzHEwQpYkpiuHUlbIOJ9SAI6DLI"
     }).then(response => {
-      console.log(response)
-    }).then(response => {
+      // Add the token to localstorage (to save time)
+      window.localStorage.setItem('DEMO_TOKEN_V1', response.data.access_token);
+    })
+  }
+
+  getPosts = () => {
+    Axios.get("https://eindwerk.jnnck.be/api/posts")
+    .then(response => {
       console.log(response)
     })
   }
+
+
 
   render() {
     return (
@@ -61,7 +76,7 @@ class App extends Component {
         <br/>
         <br/>
         <h1>Get data</h1>
-        <button>Get data</button>
+        <button onClick={this.getPosts}>Get data</button>
       </div>
     );
   }
